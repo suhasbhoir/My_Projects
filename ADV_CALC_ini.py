@@ -1,8 +1,6 @@
 import math
 from termcolor import colored
 
-
-
 class calculator:
 
     def __init__(self, a, b, c, d, h, n, o, p, v, x, y ):
@@ -191,7 +189,7 @@ while True:
             toa = calc.tan()
             print(f'\nTangentθ theta is =', colored(toa, 'yellow'))
         elif uinp == 11:
-            calc.a = float(input('\n Please ether the value of radius : '))
+            calc.a = float(input('\n Please enter the value of radius : '))
             area = calc.are()
             print(f'\narea of a circle is =', colored(area, 'yellow'))
         elif uinp == 12:
@@ -207,19 +205,19 @@ while True:
             else:
                 print('Invalid Input detected')
         elif uinp == 13:
-            calc.p = float(input('\n Please ether the percentage value : '))
-            calc.v = float(input('\n Please ether the value to percentage of  : '))
+            calc.p = float(input('\n Please enter the percentage value : '))
+            calc.v = float(input('\n Please enter the value to percentage of  : '))
             per = calc.salper()
             print(f'\n \"{calc.p}%\" of \"{calc.v}\" is =', colored(per, 'yellow'))
         elif uinp == 14:
-            calc.x = int(input('\n Please ether the number u want to calculate table of : '))
+            calc.x = int(input('\n Please enter the number u want to calculate table of : '))
             print(f'\nTable of {calc.x} is below\n')
             for i in range(1, 11):
                 print(calc.x, 'x', i, '=', calc.x*i)
         elif uinp == 15:
             calc.a = float(input('\n Please enter the "a" value: '))
-            calc.b = float(input('\n Please ether the "b" value: '))
-            calc.c = float(input('\n Please ether the "c" value: '))
+            calc.b = float(input('\n Please enter the "b" value: '))
+            calc.c = float(input('\n Please enter the "c" value: '))
             print('\n', calc.quatradic_r())
         elif uinp == 16:
             print('This is a Pythagorean Theorem calculator! Calculate one side of right-angled triangle.')
@@ -243,11 +241,13 @@ while True:
             else:
                 print('\nInvalid Input detected')
         elif uinp == 17:
-            calc.n = int(input('\n Please ether the number to find fibonacci sequence : '))
+            calc.n = int(input('\n Please enter the number to find fibonacci sequence : '))
             fibo = calc.fibonacci_itrate()
             print(f"Fibonacci sequence of {calc.n} is: -", colored(fibo, 'yellow'))
     except ValueError as vr:
-        print("Enter a number not letter", vr)
+        print("Dont type any letter or special characters, ", vr)
+    except ZeroDivisionError as zd:
+        print("Dividing by zero is not possibe, ", zd)
         # else:
         #     print('Invalid input detected')
     stop = input("If you want to re calculate enter \"Y\" or you can enter \"N\": ").lower().strip()
