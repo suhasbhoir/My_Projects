@@ -17,10 +17,22 @@ class Jarvis:
         engine.say(inp)
         engine.runAndWait()
 
+    def timeJar():
+        hour = int(datetime.datetime.now().hour)
+        if hour >= 0 and hour <= 12:
+            print("Good Monrning")
+        elif hour >= 12 and hour <= 15:
+            print("Good afternoon")
+        elif hour >= 15 and hour <= 21:
+            print("Good evening")
+        else:
+            print("Good Night")
+
     def micJar():
         r = sr.Recognizer()
         with sr.Microphone() as source:
-            print('Please Say Something...')
+            print('Please Say Something, I am Listning...')
+            r.pause_threshold = 1
             audio = r.listen(source)
         try:
             print('Jarvis Thinks you said' + r.recognize_sphinx(audio))
