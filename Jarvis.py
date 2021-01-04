@@ -1,4 +1,3 @@
-import time as ti
 import datetime as dt
 import pyttsx3 as py3
 import speech_recognition as sr 
@@ -7,6 +6,7 @@ import PyAudio
 for index, name in enumerate(sr.Microphone.list_microphone_names()):
     print("Microphone with name \"{1}\" found for `Microphone(device_index={0})`".format(index, name))
 class Jarvis:
+
     def speakJar(inp):
         engine = py3.init()
         voices = engine.getProperty('voices') 
@@ -17,16 +17,16 @@ class Jarvis:
         engine.say(inp)
         engine.runAndWait()
 
-    def timeJar():
+    def wishJar():
         hour = int(datetime.datetime.now().hour)
         if hour >= 0 and hour <= 12:
-            print("Good Monrning")
+            speakJar("Good Monrning")
         elif hour >= 12 and hour <= 15:
-            print("Good afternoon")
+            speakJar("Good afternoon")
         elif hour >= 15 and hour <= 21:
-            print("Good evening")
+            speakJar("Good evening")
         else:
-            print("Good Night")
+            speakJar("Good Night")
 
     def micJar():
         r = sr.Recognizer()
@@ -39,9 +39,11 @@ class Jarvis:
         except sr.UnknownValueError:
             print('Jarvis could not recognize the audio')
         except sr.RequestError as e:
-            print(f'sphinx errors; {e}')
+            print('Please Say again...')
 
-    micJar()
+if __name__ == '__main__':
+    wishJar()
+    
     
 
 
