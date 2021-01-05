@@ -9,6 +9,8 @@ import random as rd
 import weather_forecast as wf
 import requests as rq
 from PIL import Image as img
+import pywhatkit as kit
+import pyjokes
 
 # class Jarvis:
 def speakJarv(audio):
@@ -159,6 +161,14 @@ if __name__ == '__main__':
         elif 'close edge explorer' in query:
             os.system("taskkill /f /im msedge.exe")
             speakJarv("Closing eadge web browser...")
+
+        elif 'play' in query:
+            cont = query.replace('play', '')
+            speakJarv(f"playing {cont}")
+            kit.playonyt(cont)  
+
+        elif 'joke' in query:
+            speakJarv(pyjokes.get_joke())      
 
             
                
