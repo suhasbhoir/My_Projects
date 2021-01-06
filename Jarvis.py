@@ -1,4 +1,4 @@
-import datetime as dt
+import datetime as dt 
 import pyttsx3 as py3
 import speech_recognition as sr 
 import wikipedia as wiki
@@ -11,6 +11,8 @@ import requests as rq
 from PIL import Image as img
 import pywhatkit as kit
 import pyjokes
+import json
+import pyautogui
 
 # class Jarvis:
 def speakJarv(audio):
@@ -45,6 +47,8 @@ def wishJarv():
         speakJarv("Good Night")
         speakJarv(f"it's {timenow}")
         speakJarv("myself Jarvis. How may i help you")
+def myPython():
+    sp.Popen(["python3 My_Projects\ADV_CALC_ini.py"])        
 
 def listenJarv():
     r = sr.Recognizer()
@@ -134,7 +138,7 @@ if __name__ == '__main__':
             speakJarv("Closing git bash")  
 
         elif 'open outlook' in query:
-            openoutlook = "C:\Program Files\Microsoft Office\root\Office16\OUTLOOK.EXE"
+            openoutlook = "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
             os.startfile(openoutlook)
             speakJarv("Opening outlook mail client...")   
             
@@ -151,9 +155,6 @@ if __name__ == '__main__':
             os.system("taskkill /f /im chrome.exe")
             speakJarv("Closing Google chrome web browser...")
 
-        elif 'photos' in query:
-            path =  "E:\\HUAWEI PIC\\06052020" 
-
         elif 'close internet explorer' in query:
             os.system("taskkill /f /im iexplorer.exe")
             speakJarv("Closing internet explorer web browser...")
@@ -166,9 +167,104 @@ if __name__ == '__main__':
             cont = query.replace('play', '')
             speakJarv(f"playing {cont}")
             kit.playonyt(cont)  
+        
+        elif 'search' in query:
+            cont = query.replace('search', '')
+            kit.search(cont)  
+            speakJarv(f"searching {cont}")
+            print(f'Searching {cont}') 
 
         elif 'joke' in query:
             speakJarv(pyjokes.get_joke())      
+        
+        elif 'who is the' in query:
+            try:
+                obj = query.replace('who is the', '')
+                info = wiki.summary(obj)
+                print(info, 2)
+                speakJarv(info)
+            except wiki.exceptions.DisambiguationError as e:
+                speakJarv(f"whatever you ask is not match or not in wikipedia database, {e}")
+                print(f"whatever you ask is not match or not in wikipedia database, {e}")
+            except wiki.exceptions.PageError as pe:
+                speakJarv("Requested page not found please say clear or search diffrent result, {pe}")
+                print("Requested page not found please say clear or search diffrent result, {pe}")
+            except wiki.exceptions.HTTPTimeoutError as h:
+                speakJarv("{h}")
+                print("{h}")
+            except wiki.exceptions.DisambiguationError as d:
+                speakJarv("{d}")
+                print("{d}")
+            except wiki.exceptions.RedirectError as r:
+                speakJarv("{r}")
+                print("{r}")
+            except wiki.exceptions.WikipediaException as w:
+                speakJarv("{w}")
+                print("{w}")
+
+        elif 'what is the' in query:
+            try: 
+                obj = query.replace('what is the', '')
+                info = wiki.summary(obj)
+                print(info, 2)
+                speakJarv(info, 2)
+            except wiki.exceptions.DisambiguationError as e:
+                speakJarv(f"whatever you ask is not match or not in wikipedia database, {e}")
+                print(f"whatever you ask is not match or not in wikipedia database, {e}")
+            except wiki.exceptions.PageError as pe:
+                speakJarv("Requested page not found please say clear or search diffrent result, {pe}")
+                print("Requested page not found please say clear or search diffrent result, {pe}")
+            except wiki.exceptions.HTTPTimeoutError as h:
+                speakJarv("{h}")
+                print("{h}")
+            except wiki.exceptions.DisambiguationError as d:
+                speakJarv("{d}")
+                print("{d}")
+            except wiki.exceptions.RedirectError as r:
+                speakJarv("{r}")
+                print("{r}")
+            except wiki.exceptions.WikipediaException as w:
+                speakJarv("{w}")
+                print("{w}")
+      
+        elif 'calculator' in query:
+            myPython()
+            speakJarv("Opening your own calculator...")  
+
+        elif 'arrange my webex' in query:
+            openwebex = "C:\\Program Files (x86)\\Webex\\Webex\\Applications\\ptoneclk.exe"
+            os.startfile(openwebex)
+            speakJarv("yes, i am arranging webex for you...") 
+        
+        elif 'where i am' or 'where we are' in query:
+            speakJarv("Please wait...i am checking") 
+            try:
+                ipadd = rq.get('https://.ipify.org').text
+                print(ipadd)
+                url = 'https://get.geojs.io/v1/ip/geo' + ipadd + '.json'
+                georeq = rq.get(url)
+                geodata = georeq.json()
+                city = geodata['city']
+                country = geodata['country']
+                speakJarv(f"we are in {city} city")
+            except Exception as e:
+                print(e)  
+
+        elif 'take screenshot' or 'take a screenshot' in query:
+            speakJarv("Hi, Please tell me the name for the screenshot file")
+            name = listenJarv().lower()
+            speakJarv("Please hold the screenshot for a moment. i am taking a screenshot")
+            time.sleep(3)
+            img = pyautogui.screenshot()          
+            img.save(f"{name}.png")
+            speakJarv("I am done, The screenshot was saved successfully in main folder")     
+
+            
+           
+           
+            
+
+            
 
             
                
