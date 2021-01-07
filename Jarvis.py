@@ -13,7 +13,7 @@ import pywhatkit as kit
 import pyjokes
 import json
 import pyautogui
-
+import time
 # class Jarvis:
 def speakJarv(audio):
     engine = py3.init()
