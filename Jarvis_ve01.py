@@ -335,7 +335,7 @@ if __name__ == '__main__':
         my_permit = listenJarv()
         if 'wake up' in my_permit:
             workJars()
-        elif 'terminate jarvis' in my_permit:
+        elif 'terminate' in my_permit:
             sys.exit()
 
 
