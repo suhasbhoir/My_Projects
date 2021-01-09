@@ -1,22 +1,15 @@
 import requests as rq
 import json
-url1 = 'http://www.showmyisp.com/'
-# url = 'https://ipinfo.io/'
-isp_req = rq.get(url1)
-isp_data = isp_req.json()
-# for k, v in isp_data.items():
-#     print(f"{k} : - {v}")
-print(isp_data)
 
-# ip_is = isp_data['ip']
-# tz = ['timezone']
-# an = ['asn']
-# isp_name = ['name']
-# dm = ['domain']
-# rout = ['route']
-# isp_type = ['type']
+news_url = 'http://newsapi.org/v2/top-headlines?country=in&apiKey=f44475c3b7bd4767b5a62ce4fa72caf1'
+get_data = rq.get(news_url)
+print(get_data)
+featchingData = get_data.content
+readingNews = json.loads(featchingData)
+for i in range(10):
+    news = readingNews['articles'][i]['title']
+    print("News", i+1, news)
 
-
-# print(f"your ip address is {ip_is}")
-# for k, v in isp_data.items():
-#     print(f"{k} : - {v}")
+# print(readingNews['articles'][0]['description'])
+# readingData = json.loads(get_data)
+# print(readingData)

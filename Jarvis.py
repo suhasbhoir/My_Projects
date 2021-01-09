@@ -14,6 +14,7 @@ import pyjokes
 import json
 import pyautogui
 import time
+# import ADV_CALC_ini
 # class Jarvis:
 def speakJarv(audio):
     engine = py3.init()
@@ -228,7 +229,8 @@ if __name__ == '__main__':
                 print("{w}")
       
         elif 'calculator' in query:
-            myPython()
+            cal = "C:\\Users\\Suhas Bhoir\\Documents\\PYTHON\\My_Projects\\ADV_CALC.py"
+            os.popen(cal)
             speakJarv("Opening your own calculator...")  
 
         elif 'arrange my webex' in query:
@@ -236,8 +238,8 @@ if __name__ == '__main__':
             os.startfile(openwebex)
             speakJarv("yes, i am arranging webex for you...") 
         
-        elif 'where i am' or 'where we are' in query:
-            speakJarv("Please wait...i am checking") 
+        elif 'where i am' in query:
+            speakJarv("Please wait...i am checking")
             try:
                 ipadd = rq.get('https://.ipify.org').text
                 print(ipadd)
@@ -248,9 +250,9 @@ if __name__ == '__main__':
                 country = geodata['country']
                 speakJarv(f"we are in {city} city")
             except Exception as e:
-                print(e)  
+                print(e)
 
-        elif 'take screenshot' or 'take a screenshot' in query:
+        elif 'take screenshot' in query:
             speakJarv("Hi, Please tell me the name for the screenshot file")
             name = listenJarv().lower()
             speakJarv("Please hold the screenshot for a moment. i am taking a screenshot")

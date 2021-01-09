@@ -5,13 +5,9 @@ import wikipedia as wiki
 import webbrowser as wb
 import os 
 import subprocess as sp
-import random as rd
-import weather_forecast as wf
 import requests as rq
-from PIL import Image as img
 import pywhatkit as kit
 import pyjokes
-import json
 import pyautogui
 import time
 import sys
@@ -20,6 +16,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+import json
+
 
 # class Jarvis:
 def speakJarv(audio):
@@ -60,8 +58,9 @@ def myPython():
 def listenJarv():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print('Listning...')
+        print('Listening...')
         r.pause_threshold = 1
+        r.adjust_for_ambient_noise(source)
         audio = r.listen(source)
     try:
         print('recognizing...Your audio')
@@ -90,18 +89,18 @@ def workJars():
             speakJarv("I am good")
 
         elif 'who are you' in query:
-            speakJarv(
-                "i am a fictional artificial intelligence that first appeared in the Marvel Cinematic Universe where he was voiced by Paul Bettany in Iron Man1 and Iron Man 2")
+            speakJarv("i am a fictional artificial intelligence that first appeared in the Marvel Cinematic Universe "
+                "where he was voiced by Paul Bettany in Iron Man1 and Iron Man 2")
 
         elif 'open youtube' in query:
-            wb.open("youtube.com")
-            speakJarv("yes i am opening youtube for you")
-            ptint("Youtube is being open........")
+             wb.open("youtube.com")
+             speakJarv("yes, i am opening youtube for you")
+             print("Youtube is being open........")
 
         elif 'open wikipedia' in query:
             wb.open("en.wikipedia.org")
             speakJarv("yes i am opening wikipedia for you")
-            ptint("Wikipedia is being open........")
+            print("Wikipedia is being open........")
 
         elif 'time' in query:
             timenow = dt.datetime.now().strftime("%I:%M %p")
@@ -115,6 +114,7 @@ def workJars():
 
         elif 'open code' in query:
             opencode = 'C:\\Users\\Suhas Bhoir\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe'
+            speakJarv("Yes, I am opening VS code for you")
             os.startfile(opencode)
 
         elif 'close code' in query:
@@ -325,6 +325,19 @@ def workJars():
                     input_box.send_keys(msg + Keys.ENTER)
                     speakJarv('Your message sent successfully')
 
+        elif 'tell me top 10 news' in query:
+            news_url = 'http://newsapi.org/v2/top-headlines?country=in&apiKey=f44475c3b7bd4767b5a62ce4fa72caf1'
+            get_data = rq.get(news_url)
+            featchingData = get_data.content
+            readingNews = json.loads(featchingData)
+            for i in range(10):
+                news = readingNews['articles'][i]['title']
+                speakJarv(news)
+                print("News", i + 1, ": -", news)
+
+
+
+
         elif 'sleep' in query:
             speakJarv('I am going to sleep now, to wake me up say wake up jarvis')
             break
@@ -335,7 +348,10 @@ if __name__ == '__main__':
         my_permit = listenJarv()
         if 'wake up' in my_permit:
             workJars()
-        elif 'terminate' in my_permit:
+        elif 'inactive yourself' in my_permit:
+            speakJarv("You commanded me to be inactive, and I obeyed. From now on, I'll stay"
+                      "in this position until you start me again. Run my code to get me started again. Bye Bye and "
+                      "Good day")
             sys.exit()
 
 
