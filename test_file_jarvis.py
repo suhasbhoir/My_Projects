@@ -1,15 +1,14 @@
-import requests as rq
-import json
+import requests
 
-news_url = 'http://newsapi.org/v2/top-headlines?country=in&apiKey=f44475c3b7bd4767b5a62ce4fa72caf1'
-get_data = rq.get(news_url)
-print(get_data)
-featchingData = get_data.content
-readingNews = json.loads(featchingData)
-for i in range(10):
-    news = readingNews['articles'][i]['title']
-    print("News", i+1, news)
+url = "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/spelling/AutoComplete"
 
-# print(readingNews['articles'][0]['description'])
-# readingData = json.loads(get_data)
-# print(readingData)
+querystring = {"text":"do"}
+
+headers = {
+    'x-rapidapi-key': "452109b7admsh4bf0329e23bc7f5p1b78d1jsnd54cc612e43a",
+    'x-rapidapi-host': "contextualwebsearch-websearch-v1.p.rapidapi.com"
+    }
+
+response = requests.request("GET", url, headers=headers, params=querystring)
+
+print(response.text)

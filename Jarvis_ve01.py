@@ -17,6 +17,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import json
+import pyowm
+from pyowm.exceptions import *
 
 
 # class Jarvis:
@@ -328,16 +330,37 @@ def workJars():
         elif 'tell me top 10 news' in query:
             news_url = 'http://newsapi.org/v2/top-headlines?country=in&apiKey=f44475c3b7bd4767b5a62ce4fa72caf1'
             get_data = rq.get(news_url)
-            featchingData = get_data.content
-            readingNews = json.loads(featchingData)
+            fetching_Data = get_data.content
+            readingNews = json.loads(fetching_Data)
             for i in range(10):
                 news = readingNews['articles'][i]['title']
                 speakJarv(news)
                 print("News", i + 1, ": -", news)
 
-
-
-
+        elif 'weather status in' in query:
+            try:
+                owm = pyowm.OWM('bf1099e0745f2d7eb499a388d55a8912')
+                city = query.replace('weather status in', '')
+                loc = owm.weather_manager().weather_at_place(city)
+                weather = loc.weather
+                temp = weather.temperature(unit='celsius')
+                status = weather.detailed_status
+                speed_wind = weather.get_wind()["speed"]
+                wind_dig = weather.get_wind()["deg"]
+                humidity = weather.get_humidity()
+                speakJarv('The temperature today in' + city)
+                print('The temperature today in', city)
+                for t, v in temp.items():
+                    print(t, ":", v, 'degrees celsius.')
+                speakJarv('The day today will have' + status + '.')
+                print('The day today will have', status, '.')
+                if 'rain' or 'thunderstorm' in status:
+                    speakJarv("Check Train availability if going outside f  or work")
+                speakJarv("Wind speed is in" + city + 'city is' + speed_wind + " and degree is" + wind_dig)
+                print("Wind speed is in" + city + 'city is' + speed_wind + " and degree is" + wind_dig)
+                speakJarv("Humidity in " + city + "is " + humidity)
+            except Exception as e1:
+                print(e1)
         elif 'sleep' in query:
             speakJarv('I am going to sleep now, to wake me up say wake up jarvis')
             break
