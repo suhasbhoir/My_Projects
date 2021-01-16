@@ -18,8 +18,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import json
 import pyowm
-from pyowm.exceptions import *
-
+import cv2
+import smtplib
+import ssl
 
 # class Jarvis:
 def speakJarv(audio):
@@ -244,15 +245,21 @@ def workJars():
         elif 'where i am' in query:
             speakJarv("Please wait...i am checking")
             try:
-                url = 'https://ipinfo.io/'
+                url = 'http://ip-api.com/json/'
                 geo_req = rq.get(url)
                 geo_data = geo_req.json()
                 city = geo_data['city']
-                region = geo_data['region']
+                region = geo_data['regionName']
                 country = geo_data['country']
-                if 'IN' in country:
-                    country = country.replace('IN', "India")
-                speakJarv(f"we are in {city} city and state is {region} and country {country} ")
+                pincode = geo_data['zip']
+                latitude = geo_data['lat']
+                longitude = geo_data['lon']
+                timezone = geo_data['timezone']
+                speakJarv(f"we are in {city} city, state is {region}, Pin code is {pincode}, time zone is {timezone}, "
+                          f"latitude {latitude}, longitude {longitude} country {country} ")
+
+                print(f"we are in {city} city, state is {region}, Pin code is {pincode}, time zone is {timezone}, "
+                      f"latitude {latitude}, longitude {longitude} country {country} ")
             except Exception as e:
                 print(e)
 
@@ -269,12 +276,20 @@ def workJars():
                 print(e)
 
         elif 'isp details' in query:
-            url = 'https://ipinfo.io/'
+            speakJarv("Please wait...i am checking")
+            url = 'http://ip-api.com/json/'
             isp_req = rq.get(url)
             isp_data = isp_req.json()
             for k, v in isp_data.items():
-                speakJarv(f"{k} : - {v}")
-                print(f"{k} : - {v}")
+                my_isp = f'{k} : {v}'
+                if 'lat' in my_isp:
+                    my_isp = my_isp.replace('lat', 'latitude')
+                elif 'lon' in my_isp:
+                    my_isp = my_isp.replace('lon', 'longitude')
+                elif 'as' in my_isp:
+                    my_isp = my_isp.replace('as', 'asn')
+                speakJarv(my_isp)
+                print(my_isp)
 
         elif 'screenshot' in query:
             speakJarv("Hi, Please tell me the name for the screenshot file")
@@ -284,6 +299,22 @@ def workJars():
             img = pyautogui.screenshot()
             img.save(f"{name}.png")
             speakJarv("I am done, The screenshot was saved successfully in main folder")
+
+        elif 'click my photo' in query:
+            speakJarv("Hi, please suggest me what to name this picture")
+            name = listenJarv().lower()
+            speakJarv("Wait a minute, I'm taking your picture with a Front camera "
+                      "please take a look here")
+            time.sleep(1)
+            videoCaptureObject = cv2.VideoCapture(0)
+            result = True
+            while result:
+                ret, frame = videoCaptureObject.read()
+                cv2.imwrite(name + ".jpg", frame)
+                result = False
+            videoCaptureObject.release()
+            cv2.destroyAllWindows()
+            speakJarv(f"I am done, The picture was saved successfully with name {name} in main folder")
 
         elif 'send message on whatsapp' in query:
             speakJarv("Please enter the name to whom you want to send the message")
@@ -361,6 +392,47 @@ def workJars():
                 speakJarv("Humidity in " + city + "is " + humidity)
             except Exception as e1:
                 print(e1)
+                pass
+
+        elif 'send mail' in query:
+            speakJarv('Let me compose mail for you')
+            smtp_server = "smtp.gmail.com"
+            port = 587  # For starttls
+            sender_email = "suhas.bhoir@gmail.com"
+            speakJarv('Please enter the email address of receiver')
+            receiver_email = str(input("Enter mail here: "))
+            speakJarv('Please enter your email password, i have not filled it for security purpose')
+            password = "<your password here>"
+            r = sr.Recognizer()
+            with sr.Microphone(device_index=1) as source:
+                r.adjust_for_ambient_noise(source)
+                print("Speak:")
+                message = r.listen(source)
+                try:
+                    text = r.recognize_google(message)
+                    speakJarv("You said : {}".format(text))
+                    print("You said : {}".format(text))
+                except:
+                    speakJarv("I am sorry could not recognize your voice ")
+                    print("I am sorry could not recognize your voice ")
+
+            # Create a secure SSL context
+            context = ssl.create_default_context()
+            # Try to log in to server and send email
+            server = smtplib.SMTP(smtp_server, port)
+
+            try:
+                server.ehlo()  # Can be omitted
+                server.starttls(context=context)  # Secure the connection
+                server.ehlo()  # Can be omitted
+                server.login(sender_email, password)
+                server.sendmail(sender_email, receiver_email, message)
+            except Exception as e:
+                # Print any error messages to stdout
+                print(e)
+            finally:
+                server.quit()
+
         elif 'sleep' in query:
             speakJarv('I am going to sleep now, to wake me up say wake up jarvis')
             break
