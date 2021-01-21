@@ -21,8 +21,8 @@ import pyowm
 import cv2
 import smtplib
 import ssl
+from email.message import EmailMessage
 
-# class Jarvis:
 def speakJarv(audio):
     engine = py3.init()
     voices = engine.getProperty('voices') 
@@ -368,6 +368,41 @@ def workJars():
                 speakJarv(news)
                 print("News", i + 1, ": -", news)
 
+        elif 'do addition' in query:
+            try:
+                def add(x, y):
+                    z = x + y
+                    return z
+                speakJarv("tell me your first number")
+                x = int(listenJarv())
+                print(x)
+                speakJarv("tell me you second number")
+                y = int(listenJarv())
+                print(y)
+                z = add(x, y)
+                speakJarv(f"Addition of your two number is {z}")
+                print(f"Addition of {x} + {y} = {z}")
+            except ValueError as e:
+                speakJarv('Not understan please say it again from beganing')
+
+        elif 'do subtraction' in query:
+            try:
+                def add(x, y):
+                    z = x - y
+                    return z
+                speakJarv("tell me your first number")
+                x = int(listenJarv())
+                print(x)
+                speakJarv("tell me you second number")
+                y = int(listenJarv())
+                print(y)
+                z = add(x, y)
+                speakJarv(f"subtract {y} int {x} is {z}")
+                print(f"subtract {x} - {y} = {z}")
+            except ValueError as e:
+                speakJarv('Not understan please say it again from beganing')
+
+    
         elif 'weather status in' in query:
             try:
                 owm = pyowm.OWM('bf1099e0745f2d7eb499a388d55a8912')
@@ -394,44 +429,40 @@ def workJars():
                 print(e1)
                 pass
 
-        elif 'send mail' in query:
-            speakJarv('Let me compose mail for you')
-            smtp_server = "smtp.gmail.com"
-            port = 587  # For starttls
-            sender_email = "suhas.bhoir@gmail.com"
-            speakJarv('Please enter the email address of receiver')
-            receiver_email = str(input("Enter mail here: "))
-            speakJarv('Please enter your email password, i have not filled it for security purpose')
-            password = "<your password here>"
-            r = sr.Recognizer()
-            with sr.Microphone(device_index=1) as source:
-                r.adjust_for_ambient_noise(source)
-                print("Speak:")
-                message = r.listen(source)
-                try:
-                    text = r.recognize_google(message)
-                    speakJarv("You said : {}".format(text))
-                    print("You said : {}".format(text))
-                except:
-                    speakJarv("I am sorry could not recognize your voice ")
-                    print("I am sorry could not recognize your voice ")
+        elif 'compose email' in query:
+            listenJarv()
+           
+            def send_email(receiver, subject, message):
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.starttls()
+                # Make sure to give app access in your Google account
+                server.login('jarvispy83@gmail.com', 'fgxhdkweunxkglrp')
+                email = EmailMessage()
+                email['From'] = 'Sender_Email'
+                email['To'] = receiver
+                email['Subject'] = subject
+                email.set_content(message)
+                server.send_message(email)
 
-            # Create a secure SSL context
-            context = ssl.create_default_context()
-            # Try to log in to server and send email
-            server = smtplib.SMTP(smtp_server, port)
+            
+            def get_email_info():
+                speakJarv('To Whom you want to send email')
+                # name = get_info()
+                receiver = input('Enter the email ID here of sender: ')
+                print(receiver)
+                speakJarv('What is the subject of your email?')
+                subject = listenJarv()
+                speakJarv('Tell me the text in your email')
+                message = listenJarv()
+                send_email(receiver, subject, message)
+                speakJarv('Hey lazy ass. Your email is sent')
+                speakJarv('Do you want to send more email?')
+                send_more = listenJarv()
+                if 'yes' in send_more:
+                    get_email_info()
+            
+            get_email_info()
 
-            try:
-                server.ehlo()  # Can be omitted
-                server.starttls(context=context)  # Secure the connection
-                server.ehlo()  # Can be omitted
-                server.login(sender_email, password)
-                server.sendmail(sender_email, receiver_email, message)
-            except Exception as e:
-                # Print any error messages to stdout
-                print(e)
-            finally:
-                server.quit()
 
         elif 'sleep' in query:
             speakJarv('I am going to sleep now, to wake me up say wake up jarvis')
