@@ -3,14 +3,12 @@ import pyttsx3 as py3
 import speech_recognition as sr 
 import wikipedia as wiki
 import webbrowser as wb
-import os 
+import os, sys, random, time
 import subprocess as sp
 import requests as rq
 import pywhatkit as kit
 import pyjokes
 import pyautogui
-import time
-import sys
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -22,6 +20,10 @@ import cv2
 import smtplib
 import ssl
 from email.message import EmailMessage
+from word2number import w2n
+import pygame
+from googleapi import google 
+
 
 def speakJarv(audio):
     engine = py3.init()
@@ -180,18 +182,48 @@ def workJars():
             speakJarv("Closing eadge web browser...")
 
         elif 'play' in query:
-            cont = query.replace('play', '')
-            speakJarv(f"playing {cont}")
-            kit.playonyt(cont)
+            try:
+                cont = query.replace('play', '')
+                speakJarv(f"playing {cont}")
+                kit.playonyt(cont)
+            except kit.mainfunctions.InternetException:
+                print("No Internet : needs active internet connection")
+
 
         elif 'search' in query:
-            cont = query.replace('search', '')
-            kit.search(cont)
-            speakJarv(f"searching {cont}")
-            print(f'Searching {cont}')
+            try:
+                cont = query.replace('search', '')
+                kit.search(cont)
+                speakJarv(f"searching {cont}")
+                print(f'Searching {cont}')
+            except kit.mainfunctions.InternetException:
+                print("No Internet : needs active internet connection")
 
         elif 'joke' in query:
             speakJarv(pyjokes.get_joke())
+
+        elif 'my song' in query:
+            while True:
+                try:
+                    path = "E:\SuhasB19072018\Suhas Drive\MY PICS\MOTOG4\z3 backup\MP3\MARATHI"
+                    file = os.path.join(path, random.choice(os.listdir(path)))
+                    pygame.mixer.init()
+                    pygame.mixer.music.load(file)
+                    pygame.mixer.music.play()
+                    print("Say 'pause' to pause the song, 'resume' to unpause the song") 
+                    print("say 'next' to next song, 'exit'e to close player") 
+                    inputcmd = listenJarv().lower() 
+                    if inputcmd == 'pause song': 
+                        pygame.mixer.music.pause()	 # Pausing the music
+                    elif inputcmd == 'resume song': 
+                        pygame.mixer.music.unpause() # Resuming the music 
+                    elif inputcmd == 'next song': 
+                        pygame.mixer.music.stop() # Stop the mixer 
+                    elif inputcmd == 'exit player': 
+                        pygame.mixer.music.stop() # Stop the mixer 
+                        break    
+                except pygame.error:
+                    pass
 
         elif 'who is the' in query:
             try:
@@ -291,6 +323,12 @@ def workJars():
                 speakJarv(my_isp)
                 print(my_isp)
 
+        elif 'advanced calculator' in query:
+            try:
+                calculator
+            except Exception:
+                pass
+
         elif 'screenshot' in query:
             speakJarv("Hi, Please tell me the name for the screenshot file")
             name = listenJarv().lower()
@@ -368,6 +406,15 @@ def workJars():
                 speakJarv(news)
                 print("News", i + 1, ": -", news)
 
+        elif 'dollar to euros' in query:
+            try:
+                speakJarv('tell me how many doller you want to convert in euros')
+                doller = float(listenJarv())
+                euros = google.convert_currency(doller, "USD", "EUR")
+                print (doller + " USD = {0} EUR".format(euros))
+            except Exception:
+                pass
+
         elif 'do addition' in query:
             try:
                 def add(x, y):
@@ -385,6 +432,21 @@ def workJars():
             except ValueError as e:
                 speakJarv('Not understan please say it again from beganing')
 
+        elif 'table' in query:
+            try:
+                def table(t):
+                    for i in range(1, 11):
+                        print(f"{t} x {i} =", t * i)
+                        speakJarv(f"{t} {i}J {t * i}")
+                speakJarv('tell me number you want me to speak table of')
+                num = int(listenJarv())
+                table(num)
+            except ValueError:
+                speakJarv("i didn't understand what you said")
+                speakJarv("Please enter number on my console")
+                num = int(input("Please Enter number here: "))
+                table(num)
+
         elif 'do subtraction' in query:
             try:
                 def add(x, y):
@@ -400,35 +462,46 @@ def workJars():
                 speakJarv(f"subtract {y} int {x} is {z}")
                 print(f"subtract {x} - {y} = {z}")
             except ValueError as e:
-                speakJarv('Not understan please say it again from beganing')
+                speakJarv('Not understand please say it again from beginning')
 
-    
-        elif 'weather status in' in query:
-            try:
-                owm = pyowm.OWM('bf1099e0745f2d7eb499a388d55a8912')
-                city = query.replace('weather status in', '')
-                loc = owm.weather_manager().weather_at_place(city)
-                weather = loc.weather
-                temp = weather.temperature(unit='celsius')
-                status = weather.detailed_status
-                speed_wind = weather.get_wind()["speed"]
-                wind_dig = weather.get_wind()["deg"]
-                humidity = weather.get_humidity()
-                speakJarv('The temperature today in' + city)
-                print('The temperature today in', city)
-                for t, v in temp.items():
-                    print(t, ":", v, 'degrees celsius.')
-                speakJarv('The day today will have' + status + '.')
-                print('The day today will have', status, '.')
-                if 'rain' or 'thunderstorm' in status:
-                    speakJarv("Check Train availability if going outside f  or work")
-                speakJarv("Wind speed is in" + city + 'city is' + speed_wind + " and degree is" + wind_dig)
-                print("Wind speed is in" + city + 'city is' + speed_wind + " and degree is" + wind_dig)
-                speakJarv("Humidity in " + city + "is " + humidity)
-            except Exception as e1:
-                print(e1)
-                pass
-
+        elif 'weather' in query:
+            speakJarv('Please enter the city name below:')
+            # # speakJarv('Please enter the city name below:')
+            city = input('What city weather you are looking for: ')
+            # dumcity = query.replace('weather status in', '')
+            # city = str(dumcity)
+            # print(dumcity, city, type(city))
+            api_key ='bf1099e0745f2d7eb499a388d55a8912'
+            url = "http://api.openweathermap.org/data/2.5/weather?q={}&appid={}".format(city, api_key)
+            result = rq.get(url)
+            data = result.json()
+            longitude = data['coord']['lon']
+            latitude = data['coord']['lat']
+            climate = data['weather'][0]['main']
+            temperature = data['main']['temp']
+            temp = (temperature - 273.15)
+            tempinclel = '{0:.2f} °C'.format(temp)
+            pressure = data['main']['pressure']
+            humidity = data['main']['humidity']
+            winds = data['wind']['speed']
+            wind_speed = float(winds)
+            windd = data['wind']['deg']
+            wind_degree = float(windd)
+            name = data['name']
+            timezone = data['timezone']
+            speakJarv(f'The temperature today in {city} is  + {tempinclel} °C ')
+            print('The temperature today in ' + city + ' is: ' + tempinclel )
+            speakJarv(f"climate is: {climate}")
+            print(f"climate is: {climate}")
+            speakJarv(f"Wind speed is {winds}")
+            print(f"Wind speed is: {winds}")
+            speakJarv(f" and wind degree is {windd}")
+            print(f"wind degree is: {windd}")
+            speakJarv(f"Humidity is {humidity}")
+            print(f"Humidity is: {humidity}")
+            speakJarv(f"timezone is {timezone}")
+            print(f"Timezone: {timezone}")
+      
         elif 'compose email' in query:
             listenJarv()
            
@@ -444,8 +517,8 @@ def workJars():
                 email.set_content(message)
                 server.send_message(email)
 
-            
-            def get_email_info():
+
+             def get_email_info():
                 speakJarv('To Whom you want to send email')
                 # name = get_info()
                 receiver = input('Enter the email ID here of sender: ')
